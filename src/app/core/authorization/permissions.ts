@@ -39,6 +39,8 @@ export const PERMISSIONS = [
   'attendance:ingest',
   'recruitment:read',
   'recruitment:manage',
+  'payroll:read',
+  'payroll:manage',
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];

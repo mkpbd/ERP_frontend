@@ -23,8 +23,9 @@ import { RouterLink } from '@angular/router';
           @if (value() === null) {
             <span
               class="inline-block h-7 w-12 animate-pulse rounded bg-surface-container-high"
-              aria-label="Loading"
+              aria-hidden="true"
             ></span>
+            <span class="app-sr-only">Loading</span>
           } @else if (value() === undefined) {
             <span class="text-base text-on-surface-variant">Unavailable</span>
           } @else {
