@@ -51,6 +51,12 @@ export const routes: Routes = [
           import('./features/permissions/permissions.routes').then((m) => m.PERMISSIONS_ROUTES),
       },
       {
+        path: 'ot',
+        canMatch: [requirePermissions('ot:read')],
+        data: { breadcrumb: 'Operation theatre' },
+        loadChildren: () => import('./features/ot/ot.routes').then((m) => m.OT_ROUTES),
+      },
+      {
         path: 'audit',
         canMatch: [requirePermissions('audit:read')],
         data: { breadcrumb: 'Audit log' },

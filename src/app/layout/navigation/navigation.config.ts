@@ -32,6 +32,14 @@ export const NAVIGATION: readonly NavSection[] = [
     items: [{ label: 'Dashboard', route: '/dashboard', icon: 'dashboard', exact: true }],
   },
   {
+    label: 'Hospital',
+    items: [
+      { label: 'OT board', route: '/ot', icon: 'medical_services', permissions: ['ot:read'], exact: true },
+      { label: 'Operations', route: '/ot/cases', icon: 'list_alt', permissions: ['ot:read'] },
+      { label: 'OT setup', route: '/ot/setup', icon: 'tune', permissions: ['ot:read'] },
+    ],
+  },
+  {
     label: 'Administration',
     items: [
       { label: 'Users', route: '/users', icon: 'group', permissions: ['users:read'] },

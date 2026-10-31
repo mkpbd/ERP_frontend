@@ -41,6 +41,14 @@ export const PERMISSIONS = [
   'recruitment:manage',
   'payroll:read',
   'payroll:manage',
+  'opd:read',
+  'ipd:read',
+  'ipd:bill',
+  'ot:read',
+  'ot:request',
+  'ot:schedule',
+  'ot:note',
+  'ot:manage',
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
