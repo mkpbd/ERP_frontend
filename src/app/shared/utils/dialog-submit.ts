@@ -1,8 +1,8 @@
 import type { WritableSignal } from '@angular/core';
 import type { MatDialogRef } from '@angular/material/dialog';
 import { finalize, type Observable } from 'rxjs';
-import { toApiError } from '../../../core/http/api-error';
-import { describeError } from '../../../core/services/notification.service';
+import { toApiError } from '../../core/http/api-error';
+import { describeError } from '../../core/services/notification.service';
 
 /**
  * Runs a dialog's request: the dialog cannot be closed meanwhile, closes with the result (true for none) on success,

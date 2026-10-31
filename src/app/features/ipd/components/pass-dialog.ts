@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import type { Observable } from 'rxjs';
 import { ValidationMessagePipe } from '../../../shared/pipes/validation-message.pipe';
-import { submitDialog } from './dialog-submit';
+import { submitDialog } from '../../../shared/utils/dialog-submit';
 
 export interface PassDialogData {
   readonly submit: (visitor: {

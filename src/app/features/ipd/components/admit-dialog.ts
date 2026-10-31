@@ -17,7 +17,7 @@ import {
   type PaymentMethod,
 } from '../models/ipd.models';
 import { IpdApi } from '../services/ipd-api.service';
-import { submitDialog } from './dialog-submit';
+import { submitDialog } from '../../../shared/utils/dialog-submit';
 
 /** Old patient admission: a registered patient into a free bed, under a consultant, with who pays and an advance. */
 @Component({

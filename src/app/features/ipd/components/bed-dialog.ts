@@ -9,7 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import type { Observable } from 'rxjs';
 import { ValidationMessagePipe } from '../../../shared/pipes/validation-message.pipe';
 import { IpdApi } from '../services/ipd-api.service';
-import { submitDialog } from './dialog-submit';
+import { submitDialog } from '../../../shared/utils/dialog-submit';
 
 export interface BedDialogData {
   readonly title: string;

@@ -16,7 +16,7 @@ import {
   KIND_LABELS,
 } from '../models/ipd.models';
 import { IpdApi } from '../services/ipd-api.service';
-import { submitDialog } from './dialog-submit';
+import { submitDialog } from '../../../shared/utils/dialog-submit';
 
 export interface CorrectDialogData {
   readonly admission: Admission;

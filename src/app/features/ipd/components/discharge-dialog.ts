@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import type { Observable } from 'rxjs';
 import { DISCHARGE_LABELS, DISCHARGE_TYPES, type DischargeType } from '../models/ipd.models';
-import { submitDialog } from './dialog-submit';
+import { submitDialog } from '../../../shared/utils/dialog-submit';
 
 export interface DischargeDialogData {
   readonly submit: (type: DischargeType, note: string | null) => Observable<void>;

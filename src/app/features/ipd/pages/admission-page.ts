@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTabsModule } from '@angular/material/tabs';
+import { RouterLink } from '@angular/router';
 import { filter, map, Observable, switchMap } from 'rxjs';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ReportDownloadService } from '../../../core/services/report-download.service';
@@ -13,6 +14,7 @@ import { PageHeader } from '../../../shared/components/page-header';
 import { ReasonDialog, type ReasonDialogData } from '../../../shared/components/reason-dialog';
 import { ErrorState, LoadingState } from '../../../shared/components/state-views';
 import { StatusBadge } from '../../../shared/components/status-badge';
+import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
 import { BedDialog, type BedDialogData } from '../components/bed-dialog';
 import { CorrectDialog, type CorrectDialogData } from '../components/correct-dialog';
 import { DischargeDialog, type DischargeDialogData } from '../components/discharge-dialog';
@@ -48,6 +50,8 @@ const WIDE = { width: '34rem', maxWidth: '95vw' };
     MatIconModule,
     MatMenuModule,
     MatTabsModule,
+    RouterLink,
+    HasPermissionDirective,
     PageHeader,
     ErrorState,
     LoadingState,
@@ -64,6 +68,10 @@ const WIDE = { width: '34rem', maxWidth: '95vw' };
     } @else if (store.admission(); as a) {
       <app-page-header [title]="a.patientName" [subtitle]="subtitle()">
         <app-status-badge [label]="statusLabels[a.status]" [tone]="statusTones[a.status]" />
+        <a matButton="outlined" [routerLink]="['/nursing/admissions', a.id]" *appHasPermission="'emr:read'">
+          <mat-icon>monitor_heart</mat-icon>
+          Nursing
+        </a>
         @if (store.admitted() && store.canAdmit()) {
           <button matButton="outlined" type="button" (click)="transfer()" [disabled]="store.pending()">
             <mat-icon>swap_horiz</mat-icon>

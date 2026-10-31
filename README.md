@@ -76,6 +76,8 @@ src/app/
     │                    discharge, reopening), its account (charges, advances, final bill, dues), visitor passes
     ├── lab/             laboratory: worklist, collecting, samples, results as values, culture (antibiogram)
     │                    or written report, verification, lab setup (report forms, culture masters, templates)
+    ├── nursing/         ward nursing: the rounds' observation board, a stay's observation sheet (flags, strike
+    │                    through), medicine and care charts (order, given/done, missed, hold/stop), rounds setup
     ├── ot/              operation theatre: day board, operations, request/schedule/start/finish/cancel,
     │                    operation note and signing, charges, prints, OT masters
     ├── settings/        own profile, password change, signed-in devices

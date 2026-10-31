@@ -8,7 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import type { Observable } from 'rxjs';
 import { OptionPicker, type PickerOption } from '../../../shared/components/option-picker';
 import { IpdApi } from '../services/ipd-api.service';
-import { submitDialog } from './dialog-submit';
+import { submitDialog } from '../../../shared/utils/dialog-submit';
 
 export type DoctorsDialogData =
   | {

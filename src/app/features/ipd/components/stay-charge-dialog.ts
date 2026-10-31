@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import type { Observable } from 'rxjs';
 import { OptionPicker, type PickerOption } from '../../../shared/components/option-picker';
 import { IpdApi } from '../services/ipd-api.service';
-import { submitDialog } from './dialog-submit';
+import { submitDialog } from '../../../shared/utils/dialog-submit';
 
 export interface StayChargeDialogData {
   readonly submit: (request: {

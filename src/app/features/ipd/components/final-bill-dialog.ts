@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import type { Observable } from 'rxjs';
 import { type MoneyInput, PAYMENT_METHODS, type PaymentMethod } from '../models/ipd.models';
-import { submitDialog } from './dialog-submit';
+import { submitDialog } from '../../../shared/utils/dialog-submit';
 
 export interface FinalBillDialogData {
   /** What the bill would be today, before any discount, and the advance held against it. */
