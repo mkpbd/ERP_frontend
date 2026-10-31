@@ -72,6 +72,8 @@ src/app/
     ├── roles/           list, create, rename, permission matrix, delete
     ├── permissions/     permission catalog
     ├── audit/           audit log with filters and date range
+    ├── ipd/             inpatients: admissions, admitting, the bed board, a stay (moves, doctors, corrections,
+    │                    discharge, reopening), its account (charges, advances, final bill, dues), visitor passes
     ├── lab/             laboratory: worklist, collecting, samples, results as values, culture (antibiogram)
     │                    or written report, verification, lab setup (report forms, culture masters, templates)
     ├── ot/              operation theatre: day board, operations, request/schedule/start/finish/cancel,
@@ -212,9 +214,9 @@ production build and the e2e suite.
 ## Known limitations
 
 - Self-registration (`/auth/register`) is supported by the backend but has no page yet.
-- Of the HealthCare modules of the backend the operation theatre and the laboratory have screens so far; the
-  others (menus, masters, locations, tenants, settings, reports, OPD, IPD, billing, imaging, pharmacy, HR,
-  payroll, ...) follow.
+- Of the HealthCare modules of the backend the operation theatre, the laboratory and the inpatient front desk have
+  screens so far; the others (nursing records, menus, masters, locations, tenants, settings, reports, OPD,
+  diagnostic billing, imaging, pharmacy, HR, payroll, ...) follow.
   Navigation is defined in the frontend; `GET /menus/me` (role-granted menus) is not used yet.
 - Reports are downloaded as files (`core/services/report-download.service.ts`); which ones a user may run is
   granted per role on the backend, so a refused report shows as an error.

@@ -51,6 +51,12 @@ export const routes: Routes = [
           import('./features/permissions/permissions.routes').then((m) => m.PERMISSIONS_ROUTES),
       },
       {
+        path: 'ipd',
+        canMatch: [requirePermissions('ipd:read')],
+        data: { breadcrumb: 'Inpatients' },
+        loadChildren: () => import('./features/ipd/ipd.routes').then((m) => m.IPD_ROUTES),
+      },
+      {
         path: 'ot',
         canMatch: [requirePermissions('ot:read')],
         data: { breadcrumb: 'Operation theatre' },

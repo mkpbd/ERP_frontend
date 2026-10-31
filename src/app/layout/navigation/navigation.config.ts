@@ -34,6 +34,8 @@ export const NAVIGATION: readonly NavSection[] = [
   {
     label: 'Hospital',
     items: [
+      { label: 'Admissions', route: '/ipd', icon: 'hotel', permissions: ['ipd:read'], exact: true },
+      { label: 'Bed board', route: '/ipd/beds', icon: 'bed', permissions: ['ipd:read'] },
       { label: 'OT board', route: '/ot', icon: 'medical_services', permissions: ['ot:read'], exact: true },
       { label: 'Operations', route: '/ot/cases', icon: 'list_alt', permissions: ['ot:read'] },
       { label: 'OT setup', route: '/ot/setup', icon: 'tune', permissions: ['ot:read'] },
