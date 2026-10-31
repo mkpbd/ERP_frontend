@@ -78,6 +78,8 @@ export class DiagnosticMock {
     'home-collection-windows': [
       { id: uuid(41), label: '08:00 AM - 10:00 AM', displayOrder: 0, isActive: true },
     ],
+    'card-providers': [],
+    'test-preparations': [],
   };
   readonly patients = [
     { id: uuid(51), uhid: 260101, fullName: 'Abdul Karim', sex: 'male', mobileNo: '01711000000' },
@@ -286,7 +288,9 @@ export class DiagnosticMock {
     if (method === 'GET' && path === '/home-collectors') return json(200, { items: this.collectors() });
 
     const record =
-      /^\/(test-appointment-windows|home-collection-areas|home-collection-windows)(?:\/([^/]+))?$/.exec(path);
+      /^\/(test-appointment-windows|home-collection-areas|home-collection-windows|card-providers|test-preparations)(?:\/([^/]+))?$/.exec(
+        path,
+      );
     if (record) {
       const rows = this.records[record[1]!]!;
       const id = record[2];

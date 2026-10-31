@@ -1,8 +1,15 @@
 import { DatePipe } from '@angular/common';
 import { Component, effect, inject } from '@angular/core';
-import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -28,6 +35,7 @@ import { UserDetailStore } from '../state/user-detail.store';
     ReactiveFormsModule,
     MatButtonModule,
     MatChipsModule,
+    MatDatepickerModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -137,11 +145,58 @@ import { UserDetailStore } from '../state/user-detail.store';
             <dd>{{ user.username ?? '—' }}</dd>
             <dt class="text-on-surface-variant">Last sign-in</dt>
             <dd>{{ user.lastLoginAt ? (user.lastLoginAt | date: 'medium') : 'Never' }}</dd>
+            <dt class="text-on-surface-variant">Signs in until</dt>
+            <dd data-testid="user-expiry">
+              {{ user.expiresAt ? (lastDay(user.expiresAt) | date: 'mediumDate') : 'No end' }}
+            </dd>
             <dt class="text-on-surface-variant">Created</dt>
             <dd>{{ user.createdAt | date: 'medium' }}</dd>
             <dt class="text-on-surface-variant">Updated</dt>
             <dd>{{ user.updatedAt | date: 'medium' }}</dd>
           </dl>
+          <ng-container *appHasPermission="'users:deactivate'">
+            @if (!store.isSelf()) {
+              <form
+                class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-start"
+                [formGroup]="expiryForm"
+                (ngSubmit)="saveExpiry()"
+                novalidate
+                aria-label="Account expiry"
+              >
+                <mat-form-field class="flex-1">
+                  <mat-label>Signs in until (last day)</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="expiryPicker"
+                    [formControl]="expiry"
+                    data-testid="expiry-date"
+                  />
+                  <mat-datepicker-toggle matIconSuffix [for]="expiryPicker" />
+                  <mat-datepicker #expiryPicker />
+                  <mat-hint>For a temporary account; it cannot sign in after this day.</mat-hint>
+                </mat-form-field>
+                <button
+                  matButton="tonal"
+                  type="submit"
+                  class="sm:mt-2"
+                  [disabled]="!expiry.value || store.pending() === 'expiry'"
+                >
+                  Set
+                </button>
+                @if (user.expiresAt) {
+                  <button
+                    matButton
+                    type="button"
+                    class="sm:mt-2"
+                    (click)="clearExpiry()"
+                    [disabled]="store.pending() === 'expiry'"
+                  >
+                    No end
+                  </button>
+                }
+              </form>
+            }
+          </ng-container>
         </section>
 
         @if (store.canSeeAccess()) {
@@ -223,12 +278,17 @@ export class UserDetailPage {
     displayName: ['', [Validators.required, Validators.maxLength(100)]],
   });
   protected readonly roleToAssign = new FormControl<string | null>(null);
+  protected readonly expiry = new FormControl<Date | null>(null);
+  protected readonly expiryForm = new FormGroup({ expiry: this.expiry });
 
   constructor() {
     // Sync the form with the loaded user (a DOM-free side effect that cannot be expressed as computed()).
     effect(() => {
       const user = this.store.user();
-      if (user) this.profileForm.reset({ displayName: user.displayName });
+      if (user) {
+        this.profileForm.reset({ displayName: user.displayName });
+        this.expiry.reset(user.expiresAt ? this.lastDay(user.expiresAt) : null);
+      }
     });
   }
 
@@ -242,6 +302,31 @@ export class UserDetailPage {
         });
         if (unplaced) this.notifications.error(error);
       },
+    });
+  }
+
+  /** The last day the account signs in: it stops at the start of the next one. */
+  protected lastDay(expiresAt: string): Date {
+    return new Date(new Date(expiresAt).getTime() - 1);
+  }
+
+  protected saveExpiry(): void {
+    const day = this.expiry.value;
+    if (!day) return;
+    const end = new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1);
+    this.store.setExpiry(end.toISOString()).subscribe({
+      next: () =>
+        this.notifications.success(
+          end <= new Date() ? 'Account ended; its sessions are signed out.' : 'Expiry set.',
+        ),
+      error: (error: unknown) => this.notifications.error(error),
+    });
+  }
+
+  protected clearExpiry(): void {
+    this.store.setExpiry(null).subscribe({
+      next: () => this.notifications.success('The account has no end now.'),
+      error: (error: unknown) => this.notifications.error(error),
     });
   }
 

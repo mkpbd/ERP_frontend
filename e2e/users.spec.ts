@@ -71,6 +71,18 @@ test.describe('user management', () => {
     await expect(page.getByRole('button', { name: 'Activate' })).toBeVisible();
   });
 
+  test('sets and clears the last day a temporary account signs in', async ({ page }) => {
+    await page.getByRole('link', { name: 'Manny Manager' }).click();
+    await expect(page.getByTestId('user-expiry')).toHaveText('No end');
+    await page.getByTestId('expiry-date').fill('12/31/2030');
+    await page.getByRole('button', { name: 'Set', exact: true }).click();
+    await expect(page.getByText('Expiry set.')).toBeVisible();
+    await expect(page.getByTestId('user-expiry')).toHaveText('Dec 31, 2030');
+    await page.getByRole('button', { name: 'No end' }).click();
+    await expect(page.getByText('The account has no end now.')).toBeVisible();
+    await expect(page.getByTestId('user-expiry')).toHaveText('No end');
+  });
+
   test('users page has no detectable accessibility violations', async ({ page }) => {
     await expect(page.getByRole('table', { name: 'Users' })).toBeVisible();
     const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag22aa']).analyze();

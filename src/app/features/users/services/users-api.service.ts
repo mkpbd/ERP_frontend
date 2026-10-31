@@ -45,6 +45,11 @@ export class UsersApi {
     return this.http.post<void>(`${this.url}/${encodeURIComponent(id)}/activate`, null);
   }
 
+  /** When the account stops signing in; null clears it (needs users:deactivate). */
+  setExpiry(id: string, expiresAt: string | null): Observable<void> {
+    return this.http.put<void>(`${this.url}/${encodeURIComponent(id)}/expiry`, { expiresAt });
+  }
+
   revokeSessions(id: string): Observable<{ revoked: number }> {
     return this.http.delete<{ revoked: number }>(`${this.url}/${encodeURIComponent(id)}/sessions`);
   }

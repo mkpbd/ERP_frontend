@@ -125,6 +125,69 @@ export const COLLECTION_WINDOWS: MasterDefinition = {
   ],
 };
 
+/** Old Admin.CreditCards: bank cards whose holders get a discount on their own diagnostic bills. */
+export const CARD_PROVIDERS: MasterDefinition = {
+  path: 'hospital/card-providers',
+  managePermission: 'diag:manage',
+  label: 'Card providers',
+  noun: 'card provider',
+  fields: [
+    { key: 'name', label: 'Card', kind: 'text', required: true, max: 100, listed: true },
+    {
+      key: 'discountPercent',
+      label: 'Discount (%)',
+      kind: 'number',
+      required: true,
+      min: 0,
+      maxValue: 100,
+      decimals: 2,
+      listed: true,
+    },
+    { key: 'contactNo', label: 'Contact', kind: 'text', max: 40, listed: true },
+    { key: 'address', label: 'Address', kind: 'text', max: 300 },
+    { key: 'isActive', label: 'Active', kind: 'toggle', listed: true },
+  ],
+};
+
+/** Old Diag.TestGroupVideos: what to do before a test, for a department's tests or one test, on the portal. */
+export const PREPARATIONS: MasterDefinition = {
+  path: 'hospital/test-preparations',
+  managePermission: 'diag:manage',
+  label: 'Preparation guides',
+  noun: 'guide',
+  fields: [
+    { key: 'title', label: 'Title', kind: 'text', required: true, max: 200, listed: true },
+    { key: 'titleBn', label: 'Title (Bangla)', kind: 'text', max: 200 },
+    {
+      key: 'departmentId',
+      label: 'For a department',
+      kind: 'select',
+      lookup: { path: 'hospital/diagnostic-departments', label: 'name' },
+      listed: true,
+    },
+    {
+      key: 'testId',
+      label: 'Or for one test',
+      kind: 'select',
+      lookup: { path: 'hospital/diagnostic-tests', label: 'name' },
+      listed: true,
+    },
+    { key: 'instructions', label: 'Instructions', kind: 'textarea', max: 4000, rows: 4 },
+    { key: 'instructionsBn', label: 'Instructions (Bangla)', kind: 'textarea', max: 4000, rows: 4 },
+    { key: 'videoUrl', label: 'Video link (https://…)', kind: 'text', max: 600 },
+    {
+      key: 'displayOrder',
+      label: 'Order',
+      kind: 'number',
+      required: true,
+      min: 0,
+      maxValue: 999,
+      initial: 0,
+    },
+    { key: 'isActive', label: 'Active', kind: 'toggle', listed: true },
+  ],
+};
+
 /** The test appointment and home collection setup, and the service a visit's charge is billed as. */
 @Component({
   selector: 'app-booking-setup-page',
@@ -151,6 +214,12 @@ export const COLLECTION_WINDOWS: MasterDefinition = {
       </mat-tab>
       <mat-tab label="Collection windows">
         <div class="pt-4"><app-master-table [definition]="collectionWindows" /></div>
+      </mat-tab>
+      <mat-tab label="Preparation guides">
+        <div class="pt-4"><app-master-table [definition]="preparations" /></div>
+      </mat-tab>
+      <mat-tab label="Card providers">
+        <div class="pt-4"><app-master-table [definition]="cards" /></div>
       </mat-tab>
       <mat-tab label="Visit charge">
         <section class="app-card mt-4 max-w-xl p-4" aria-labelledby="service-heading">
@@ -187,6 +256,8 @@ export class BookingSetupPage {
   protected readonly appointmentWindows = APPOINTMENT_WINDOWS;
   protected readonly areas = COLLECTION_AREAS;
   protected readonly collectionWindows = COLLECTION_WINDOWS;
+  protected readonly preparations = PREPARATIONS;
+  protected readonly cards = CARD_PROVIDERS;
 
   private readonly policy = rxResource({ stream: () => this.api.policy() });
   private readonly departments = rxResource({ stream: () => this.api.departments() });

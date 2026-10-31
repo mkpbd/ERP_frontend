@@ -12,6 +12,8 @@ export interface User {
   readonly status: UserStatus;
   readonly emailVerified: boolean;
   readonly lastLoginAt: string | null;
+  /** Signing in stops from this moment; null: never. */
+  readonly expiresAt: string | null;
   readonly createdAt: string;
   readonly updatedAt: string;
 }

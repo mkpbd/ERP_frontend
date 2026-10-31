@@ -164,7 +164,7 @@ export class MasterTable {
     const definition = this.definition();
     this.dialog
       .open<MasterDialog, MasterDialogData, RecordRow>(MasterDialog, {
-        data: { definition, options: this.options(), ...(record ? { record } : {}) },
+        data: { definition, options: this.options, ...(record ? { record } : {}) },
         width: '32rem',
         maxWidth: '95vw',
       })

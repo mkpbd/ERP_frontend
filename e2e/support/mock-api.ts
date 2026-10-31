@@ -13,6 +13,7 @@ export interface MockUser {
   status: 'active' | 'deactivated';
   emailVerified: boolean;
   lastLoginAt: string | null;
+  expiresAt: string | null;
   createdAt: string;
   updatedAt: string;
   password: string;
@@ -117,6 +118,7 @@ export class MockApi {
       status: 'active',
       emailVerified: true,
       lastLoginAt: NOW,
+      expiresAt: null,
       createdAt: NOW,
       updatedAt: NOW,
       password,
@@ -292,6 +294,11 @@ export class MockApi {
       }
       if (method === 'GET' && sub === '/permissions') {
         return json(200, { userId: target.id, roles: [], permissions: this.permissionsOf(target) });
+      }
+      if (method === 'PUT' && sub === '/expiry') {
+        if (!held.has('users:deactivate')) return deny();
+        target.expiresAt = (route.request().postDataJSON() as { expiresAt: string | null }).expiresAt;
+        return json(204);
       }
       if (method === 'POST' && (sub === '/deactivate' || sub === '/activate')) {
         if (!held.has('users:deactivate')) return deny();

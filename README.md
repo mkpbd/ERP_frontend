@@ -72,8 +72,9 @@ src/app/
     │                    on a click), admin counters, recent activity (@defer)
     ├── diagnostic/      test appointments (a day's windows and places, booking, no-show, cancel, the slip,
     │                    billing on the day), home collections (booking by area, collectors, collected, billing
-    │                    the visit, the run sheet; a collector's own visits), booking setup and the visit's service
-    ├── users/           list (search, filter, sort, paginate), create, detail, roles, deactivate
+    │                    the visit, the run sheet; a collector's own visits), booking setup (windows, areas,
+    │                    preparation guides, card providers) and the visit's service
+    ├── users/           list (search, filter, sort, paginate), create, detail, roles, deactivate, expiry
     ├── roles/           list, create, rename, permission matrix, delete
     ├── permissions/     permission catalog
     ├── audit/           audit log with filters and date range

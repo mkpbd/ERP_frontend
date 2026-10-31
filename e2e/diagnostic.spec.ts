@@ -203,6 +203,45 @@ test.describe('diagnostic bookings', () => {
       defaultReferralPercent: 0,
       homeCollectionTestId: diagnostic.tests[3]!.id,
     });
+
+    // What to do before a department's tests, shown on the portal.
+    await page.getByRole('tab', { name: 'Preparation guides' }).click();
+    await page.getByRole('button', { name: 'New guide' }).click();
+    const guide = page.getByRole('dialog', { name: 'New guide' });
+    await expect(guide.getByLabel('Title', { exact: true })).toBeFocused();
+    await guide.getByLabel('Title', { exact: true }).fill('Before a blood test');
+    await guide.getByRole('combobox', { name: 'For a department' }).click();
+    await page.getByRole('option', { name: 'Pathology' }).click();
+    await guide.getByLabel('Instructions', { exact: true }).fill('Fast for 10 hours; water is fine.');
+    await guide.getByLabel('Video link (https://…)').fill('https://videos.example.com/fasting.mp4');
+    await guide.getByRole('button', { name: 'Add' }).click();
+    await expect(
+      page
+        .getByRole('table', { name: 'Preparation guides' })
+        .getByRole('row', { name: /Before a blood test/ }),
+    ).toContainText('Pathology');
+    expect(diagnostic.records['test-preparations']!.at(-1)).toMatchObject({
+      departmentId: diagnostic.departments[0]!.id,
+      testId: null,
+      instructionsBn: null,
+      displayOrder: 0,
+    });
+
+    // A bank card whose holders get a discount.
+    await page.getByRole('tab', { name: 'Card providers' }).click();
+    await page.getByRole('button', { name: 'New card provider' }).click();
+    const card = page.getByRole('dialog', { name: 'New card provider' });
+    await expect(card.getByLabel('Card')).toBeFocused();
+    await card.getByLabel('Card').fill('City Bank Amex');
+    await card.getByLabel('Discount (%)').fill('15');
+    await card.getByRole('button', { name: 'Add' }).click();
+    await expect(
+      page.getByRole('table', { name: 'Card providers' }).getByRole('row', { name: /City Bank Amex/ }),
+    ).toContainText('15.00');
+    expect(diagnostic.records['card-providers']!.at(-1)).toMatchObject({
+      discountPercent: 15,
+      address: null,
+    });
   });
 
   test('shows a collector only the visits given to them', async ({ page }) => {

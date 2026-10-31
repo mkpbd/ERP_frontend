@@ -8,7 +8,7 @@ import { toApiError } from '../../../core/http/api-error';
 import { UsersApi } from '../services/users-api.service';
 
 export type UserAction =
-  'rename' | 'activate' | 'deactivate' | 'revoke-sessions' | 'assign-role' | 'remove-role';
+  'rename' | 'activate' | 'deactivate' | 'expiry' | 'revoke-sessions' | 'assign-role' | 'remove-role';
 
 /**
  * State for one user's detail page. Provided by the page, so it reads that page's `:id` and is discarded
@@ -91,6 +91,10 @@ export class UserDetailStore {
       active ? this.api.activate(id) : this.api.deactivate(id),
       () => this.userResource.reload(),
     );
+  }
+
+  setExpiry(expiresAt: string | null): Observable<void> {
+    return this.run('expiry', this.api.setExpiry(this.userId(), expiresAt), () => this.userResource.reload());
   }
 
   revokeSessions(): Observable<number> {

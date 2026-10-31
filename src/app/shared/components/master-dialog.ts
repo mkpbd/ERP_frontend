@@ -33,8 +33,8 @@ export interface MasterDialogData {
   readonly definition: MasterDefinition;
   /** Left out: a new record. */
   readonly record?: RecordRow;
-  /** The choices of `lookup` fields, by field key (loaded by the table). */
-  readonly options?: Readonly<Record<string, readonly MasterOption[]>>;
+  /** The choices of `lookup` fields, by field key, as the table loads them (they may come after the dialog opens). */
+  readonly options?: () => Readonly<Record<string, readonly MasterOption[]>>;
 }
 
 /** At most `decimals` decimals (0: a whole number). */
@@ -210,7 +210,7 @@ export class MasterDialog {
   protected readonly error = signal<string | null>(null);
 
   protected choices(field: MasterField): readonly MasterOption[] {
-    return field.options ?? this.data.options?.[field.key] ?? [];
+    return field.options ?? this.data.options?.()[field.key] ?? [];
   }
 
   protected step(field: MasterField): number {
