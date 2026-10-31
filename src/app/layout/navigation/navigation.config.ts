@@ -49,6 +49,24 @@ export const NAVIGATION: readonly NavSection[] = [
       { label: 'Lab worklist', route: '/lab', icon: 'biotech', permissions: ['lab:read'], exact: true },
       { label: 'Lab samples', route: '/lab/samples', icon: 'science', permissions: ['lab:read'] },
       { label: 'Lab setup', route: '/lab/setup', icon: 'settings_applications', permissions: ['lab:read'] },
+      {
+        label: 'Test appointments',
+        route: '/diagnostic/appointments',
+        icon: 'event_available',
+        permissions: ['diag:read'],
+      },
+      {
+        label: 'Home collections',
+        route: '/diagnostic/home-collections',
+        icon: 'home_health',
+        anyPermissions: ['diag:read', 'diag:collect'],
+      },
+      {
+        label: 'Booking setup',
+        route: '/diagnostic/setup',
+        icon: 'edit_calendar',
+        permissions: ['diag:read'],
+      },
     ],
   },
   {

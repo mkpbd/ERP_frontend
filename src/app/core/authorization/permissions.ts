@@ -63,6 +63,11 @@ export const PERMISSIONS = [
   'lab:result',
   'lab:verify',
   'lab:manage',
+  'diag:read',
+  'diag:manage',
+  'diag:bill',
+  'diag:book',
+  'diag:collect',
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];

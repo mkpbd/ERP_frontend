@@ -5,11 +5,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
-import { filter, switchMap } from 'rxjs';
+import { filter, forkJoin, map, of, switchMap, type Observable } from 'rxjs';
 import { Authorization } from '../../core/authorization/authorization.service';
 import { toApiError } from '../../core/http/api-error';
 import { NotificationService } from '../../core/services/notification.service';
-import type { MasterDefinition, RecordRow } from '../models/record-master';
+import {
+  displayValue,
+  type MasterDefinition,
+  type MasterField,
+  type MasterOption,
+  type RecordRow,
+} from '../models/record-master';
 import { RecordsApi } from '../services/records-api.service';
 import { ConfirmService } from './confirm-dialog';
 import { EmptyState, ErrorState } from './state-views';
@@ -64,7 +70,7 @@ import { MasterDialog, type MasterDialogData } from './master-dialog';
                       [tone]="row[field.key] ? 'success' : 'neutral'"
                     />
                   } @else {
-                    {{ row[field.key] ?? '—' }}
+                    {{ show(field, row) }}
                   }
                 </td>
               </ng-container>
@@ -119,8 +125,35 @@ export class MasterTable {
     const error = this.records.error();
     return error ? toApiError(error) : null;
   });
+  /** The choices of the fields that look up another master, by field key. */
+  private readonly lookups = rxResource({
+    params: () => this.definition(),
+    stream: ({ params }): Observable<Record<string, readonly MasterOption[]>> => {
+      const fields = params.fields.filter((field) => field.lookup);
+      if (fields.length === 0) return of({});
+      return forkJoin(
+        Object.fromEntries(
+          fields.map((field) => [
+            field.key,
+            this.api
+              .list(field.lookup!.path)
+              .pipe(
+                map((rows) =>
+                  rows.map((row) => ({ value: row.id, label: String(row[field.lookup!.label] ?? '') })),
+                ),
+              ),
+          ]),
+        ),
+      );
+    },
+  });
+  private readonly options = computed(() => (this.lookups.hasValue() ? this.lookups.value() : {}));
   protected readonly listed = computed(() => this.definition().fields.filter((field) => field.listed));
   protected readonly columns = computed(() => [...this.listed().map((field) => field.key), 'actions']);
+
+  protected show(field: MasterField, row: RecordRow): string {
+    return displayValue(field, row[field.key], this.options()[field.key]);
+  }
 
   protected title(row: RecordRow): string {
     const key = this.definition().fields[0]?.key ?? 'name';
@@ -131,7 +164,7 @@ export class MasterTable {
     const definition = this.definition();
     this.dialog
       .open<MasterDialog, MasterDialogData, RecordRow>(MasterDialog, {
-        data: { definition, ...(record ? { record } : {}) },
+        data: { definition, options: this.options(), ...(record ? { record } : {}) },
         width: '32rem',
         maxWidth: '95vw',
       })

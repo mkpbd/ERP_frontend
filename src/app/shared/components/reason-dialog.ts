@@ -17,6 +17,8 @@ export interface ReasonDialogData {
   readonly label?: string;
   /** Styles the confirm button as a destructive action (default true). */
   readonly destructive?: boolean;
+  /** The words may be left out (a note); submitted as an empty text. */
+  readonly optional?: boolean;
   readonly submit: (reason: string) => Observable<void>;
 }
 
@@ -43,7 +45,13 @@ export interface ReasonDialogData {
         }
         <mat-form-field>
           <mat-label>{{ data.label ?? 'Reason' }}</mat-label>
-          <textarea matInput formControlName="reason" rows="2" required cdkFocusInitial></textarea>
+          <textarea
+            matInput
+            formControlName="reason"
+            rows="2"
+            [required]="!data.optional"
+            cdkFocusInitial
+          ></textarea>
           <mat-error>{{ reason.errors | validationMessage: data.label ?? 'Reason' }}</mat-error>
         </mat-form-field>
       </mat-dialog-content>
@@ -67,7 +75,9 @@ export class ReasonDialog {
 
   protected readonly reason = new FormControl('', {
     nonNullable: true,
-    validators: [Validators.required, Validators.maxLength(300)],
+    validators: this.data.optional
+      ? [Validators.maxLength(300)]
+      : [Validators.required, Validators.maxLength(300)],
   });
   protected readonly form = new FormGroup({ reason: this.reason });
   protected readonly submitting = signal(false);
@@ -76,7 +86,7 @@ export class ReasonDialog {
   protected submit(): void {
     if (this.submitting()) return;
     const reason = this.reason.value.trim();
-    if (!reason) {
+    if (!reason && !this.data.optional) {
       this.reason.setValue('');
       this.reason.markAsTouched();
       return;

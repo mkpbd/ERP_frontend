@@ -29,6 +29,14 @@ export const guestGuard: CanActivateFn = () => {
   return auth.isAuthenticated() ? inject(Router).createUrlTree(['/']) : true;
 };
 
+/** Requires at least one of the listed permissions; otherwise shows the 403 page (a UX guard only). */
+export function requireAnyPermission(...permissions: Permission[]): CanMatchFn {
+  return () => {
+    if (inject(Authorization).canAny(permissions)) return true;
+    return inject(Router).createUrlTree(['/forbidden']);
+  };
+}
+
 /**
  * Requires every listed permission; otherwise shows the 403 page. A UX guard only: the backend still
  * rejects any request the user is not allowed to make.

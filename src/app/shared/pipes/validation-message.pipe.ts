@@ -11,6 +11,8 @@ export function validationMessage(errors: ValidationErrors | null | undefined, l
     return `${label} must be at least ${errors['minlength'].requiredLength} characters.`;
   if (errors['maxlength'])
     return `${label} must be at most ${errors['maxlength'].requiredLength} characters.`;
+  if (errors['min']) return `${label} must be at least ${errors['min'].min}.`;
+  if (errors['max']) return `${label} must be at most ${errors['max'].max}.`;
   if (errors['pattern']) return `${label} has an invalid format.`;
   if (errors['mismatch']) return 'The values do not match.';
   if (errors['matDatepickerParse']) return 'Enter a valid date.';

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, guestGuard, requirePermissions } from './core/guards/auth.guards';
+import { authGuard, guestGuard, requireAnyPermission, requirePermissions } from './core/guards/auth.guards';
 
 export const routes: Routes = [
   {
@@ -73,6 +73,13 @@ export const routes: Routes = [
         canMatch: [requirePermissions('lab:read')],
         data: { breadcrumb: 'Laboratory' },
         loadChildren: () => import('./features/lab/lab.routes').then((m) => m.LAB_ROUTES),
+      },
+      {
+        path: 'diagnostic',
+        canMatch: [requireAnyPermission('diag:read', 'diag:collect')],
+        data: { breadcrumb: 'Diagnostics' },
+        loadChildren: () =>
+          import('./features/diagnostic/diagnostic.routes').then((m) => m.DIAGNOSTIC_ROUTES),
       },
       {
         path: 'audit',
