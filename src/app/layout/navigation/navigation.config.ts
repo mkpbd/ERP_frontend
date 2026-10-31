@@ -37,6 +37,9 @@ export const NAVIGATION: readonly NavSection[] = [
       { label: 'OT board', route: '/ot', icon: 'medical_services', permissions: ['ot:read'], exact: true },
       { label: 'Operations', route: '/ot/cases', icon: 'list_alt', permissions: ['ot:read'] },
       { label: 'OT setup', route: '/ot/setup', icon: 'tune', permissions: ['ot:read'] },
+      { label: 'Lab worklist', route: '/lab', icon: 'biotech', permissions: ['lab:read'], exact: true },
+      { label: 'Lab samples', route: '/lab/samples', icon: 'science', permissions: ['lab:read'] },
+      { label: 'Lab setup', route: '/lab/setup', icon: 'settings_applications', permissions: ['lab:read'] },
     ],
   },
   {

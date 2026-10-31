@@ -1,29 +1,12 @@
-import type { OtMaster } from '../services/ot-api.service';
-
-export interface MasterField {
-  readonly key: string;
-  readonly label: string;
-  readonly kind: 'text' | 'textarea' | 'toggle';
-  readonly required?: boolean;
-  readonly max?: number;
-  /** Shown in the table. */
-  readonly listed?: boolean;
-}
-
-export interface MasterDefinition {
-  readonly master: OtMaster;
-  readonly label: string;
-  /** Singular, for buttons and titles. */
-  readonly noun: string;
-  readonly fields: readonly MasterField[];
-}
+import type { MasterDefinition, MasterField } from '../../../shared/models/record-master';
 
 const active: MasterField = { key: 'isActive', label: 'Active', kind: 'toggle', listed: true };
 
-/** The OT masters and their fields, as the backend's record endpoints take them. */
+/** The OT masters and their fields, as the backend's record endpoints take them (`ot:manage` to change). */
 export const OT_MASTERS: readonly MasterDefinition[] = [
   {
-    master: 'ot-rooms',
+    path: 'hospital/ot-rooms',
+    managePermission: 'ot:manage',
     label: 'OT rooms',
     noun: 'OT room',
     fields: [
@@ -34,25 +17,29 @@ export const OT_MASTERS: readonly MasterDefinition[] = [
     ],
   },
   {
-    master: 'operations',
+    path: 'hospital/operations',
+    managePermission: 'ot:manage',
     label: 'Operations',
     noun: 'operation',
     fields: [{ key: 'name', label: 'Name', kind: 'text', required: true, max: 150, listed: true }, active],
   },
   {
-    master: 'ot-types',
+    path: 'hospital/ot-types',
+    managePermission: 'ot:manage',
     label: 'OT types',
     noun: 'OT type',
     fields: [{ key: 'name', label: 'Name', kind: 'text', required: true, max: 100, listed: true }],
   },
   {
-    master: 'anaesthesia-types',
+    path: 'hospital/anaesthesia-types',
+    managePermission: 'ot:manage',
     label: 'Anaesthesia types',
     noun: 'anaesthesia type',
     fields: [{ key: 'name', label: 'Name', kind: 'text', required: true, max: 100, listed: true }],
   },
   {
-    master: 'surgery-procedures',
+    path: 'hospital/surgery-procedures',
+    managePermission: 'ot:manage',
     label: 'Surgery procedures',
     noun: 'surgery procedure',
     fields: [
@@ -62,20 +49,3 @@ export const OT_MASTERS: readonly MasterDefinition[] = [
     ],
   },
 ];
-
-/** The form's value as the backend takes it: text trimmed, empty optional text as null. */
-export function toMasterBody(
-  definition: MasterDefinition,
-  value: Readonly<Record<string, string | boolean>>,
-): Record<string, string | boolean | null> {
-  const body: Record<string, string | boolean | null> = {};
-  for (const field of definition.fields) {
-    const raw = value[field.key];
-    if (field.kind === 'toggle') body[field.key] = raw === true;
-    else {
-      const text = typeof raw === 'string' ? raw.trim() : '';
-      body[field.key] = text || (field.required ? '' : null);
-    }
-  }
-  return body;
-}

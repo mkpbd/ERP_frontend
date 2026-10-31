@@ -14,15 +14,11 @@ import type {
   OtCaseQuery,
   OtCaseSummary,
   OtClinicalRequest,
-  OtMasterRecord,
   OtNote,
   OtRoom,
   RequestOtRequest,
   ServiceOption,
 } from '../models/ot.models';
-
-/** The OT masters, by their path under `/hospital`. */
-export type OtMaster = 'ot-rooms' | 'operations' | 'ot-types' | 'anaesthesia-types' | 'surgery-procedures';
 
 type Versioned = Observable<{ version: number }>;
 
@@ -92,22 +88,6 @@ export class OtApi {
       `${this.admissionUrl(admissionId)}/charges/${encodeURIComponent(chargeId)}/cancel`,
       { reason },
     );
-  }
-
-  masters(master: OtMaster): Observable<OtMasterRecord[]> {
-    return this.http.get<OtMasterRecord[]>(`${this.hospital}/${master}`);
-  }
-
-  createMaster(master: OtMaster, body: Record<string, unknown>): Observable<OtMasterRecord> {
-    return this.http.post<OtMasterRecord>(`${this.hospital}/${master}`, body);
-  }
-
-  updateMaster(master: OtMaster, id: string, body: Record<string, unknown>): Observable<OtMasterRecord> {
-    return this.http.patch<OtMasterRecord>(`${this.hospital}/${master}/${encodeURIComponent(id)}`, body);
-  }
-
-  deleteMaster(master: OtMaster, id: string): Observable<void> {
-    return this.http.delete<void>(`${this.hospital}/${master}/${encodeURIComponent(id)}`);
   }
 
   rooms(): Observable<OtRoom[]> {

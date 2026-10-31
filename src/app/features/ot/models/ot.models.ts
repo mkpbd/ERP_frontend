@@ -126,9 +126,6 @@ export interface OtRoom {
   readonly isActive: boolean;
 }
 
-/** An OT master record: rooms, operations, OT and anaesthesia types, surgery procedures. */
-export type OtMasterRecord = { readonly id: string } & Readonly<Record<string, unknown>>;
-
 /** `GET /hospital/admissions` item, as far as choosing a stay needs it. */
 export interface AdmissionOption {
   readonly id: string;

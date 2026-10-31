@@ -58,8 +58,9 @@ src/app/
 │   ├── config/          API_BASE_URL token
 │   └── services/        notifications (snackbar), theme, page-title strategy
 ├── shared/          reusable UI with no business logic
-│   ├── components/      page header, loading/empty/error states, confirm dialog, status badge,
-│   │                    option picker (searchable select for long lists)
+│   ├── components/      page header, loading/empty/error states, confirm and reason dialogs, status badge,
+│   │                    option picker (searchable select), master table and dialog (any record endpoint)
+│   ├── services/        RecordsApi (the backend's simple record endpoints)
 │   ├── directives/      *appHasPermission
 │   ├── pipes/ validators/ utils/ models/
 ├── layout/          application frame: shell, header, sidebar, breadcrumbs, footer, auth layout,
@@ -71,6 +72,8 @@ src/app/
     ├── roles/           list, create, rename, permission matrix, delete
     ├── permissions/     permission catalog
     ├── audit/           audit log with filters and date range
+    ├── lab/             laboratory: worklist, collecting, samples, results as values, culture (antibiogram)
+    │                    or written report, verification, lab setup (report forms, culture masters, templates)
     ├── ot/              operation theatre: day board, operations, request/schedule/start/finish/cancel,
     │                    operation note and signing, charges, prints, OT masters
     ├── settings/        own profile, password change, signed-in devices
@@ -209,8 +212,9 @@ production build and the e2e suite.
 ## Known limitations
 
 - Self-registration (`/auth/register`) is supported by the backend but has no page yet.
-- Of the HealthCare modules of the backend only the operation theatre has screens yet; the others (menus,
-  masters, locations, tenants, settings, reports, OPD, IPD, diagnostics, pharmacy, HR, payroll, ...) follow.
+- Of the HealthCare modules of the backend the operation theatre and the laboratory have screens so far; the
+  others (menus, masters, locations, tenants, settings, reports, OPD, IPD, billing, imaging, pharmacy, HR,
+  payroll, ...) follow.
   Navigation is defined in the frontend; `GET /menus/me` (role-granted menus) is not used yet.
 - Reports are downloaded as files (`core/services/report-download.service.ts`); which ones a user may run is
   granted per role on the backend, so a refused report shows as an error.

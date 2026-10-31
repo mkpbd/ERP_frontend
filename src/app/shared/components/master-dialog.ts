@@ -6,21 +6,20 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { finalize } from 'rxjs';
-import { toApiError } from '../../../core/http/api-error';
-import { describeError } from '../../../core/services/notification.service';
-import { ValidationMessagePipe } from '../../../shared/pipes/validation-message.pipe';
-import { applyServerErrors } from '../../../shared/utils/form-errors';
-import type { OtMasterRecord } from '../models/ot.models';
-import { type MasterDefinition, toMasterBody } from '../models/ot-masters';
-import { OtApi } from '../services/ot-api.service';
+import { toApiError } from '../../core/http/api-error';
+import { describeError } from '../../core/services/notification.service';
+import { type MasterDefinition, type RecordRow, toMasterBody } from '../models/record-master';
+import { ValidationMessagePipe } from '../pipes/validation-message.pipe';
+import { RecordsApi } from '../services/records-api.service';
+import { applyServerErrors } from '../utils/form-errors';
 
 export interface MasterDialogData {
   readonly definition: MasterDefinition;
   /** Left out: a new record. */
-  readonly record?: OtMasterRecord;
+  readonly record?: RecordRow;
 }
 
-/** Adds or edits one OT master record; its fields come from the master's definition. */
+/** Adds or edits one master record; its fields come from the master's definition. */
 @Component({
   selector: 'app-master-dialog',
   imports: [
@@ -52,7 +51,7 @@ export interface MasterDialogData {
                 <textarea
                   matInput
                   [formControlName]="field.key"
-                  rows="5"
+                  [rows]="field.rows ?? 5"
                   [required]="!!field.required"
                 ></textarea>
                 <mat-error>{{ form.controls[field.key]?.errors | validationMessage: field.label }}</mat-error>
@@ -79,8 +78,8 @@ export interface MasterDialogData {
 })
 export class MasterDialog {
   protected readonly data = inject<MasterDialogData>(MAT_DIALOG_DATA);
-  private readonly api = inject(OtApi);
-  private readonly dialogRef = inject<MatDialogRef<MasterDialog, OtMasterRecord>>(MatDialogRef);
+  private readonly api = inject(RecordsApi);
+  private readonly dialogRef = inject<MatDialogRef<MasterDialog, RecordRow>>(MatDialogRef);
 
   protected readonly form = new FormGroup(
     Object.fromEntries(
@@ -114,8 +113,8 @@ export class MasterDialog {
     const { definition, record } = this.data;
     const body = toMasterBody(definition, this.form.getRawValue() as Record<string, string | boolean>);
     const request$ = record
-      ? this.api.updateMaster(definition.master, record.id, body)
-      : this.api.createMaster(definition.master, body);
+      ? this.api.update(definition.path, record.id, body)
+      : this.api.create(definition.path, body);
     this.submitting.set(true);
     this.error.set(null);
     this.dialogRef.disableClose = true;
@@ -130,7 +129,7 @@ export class MasterDialog {
         next: (saved) => this.dialogRef.close(saved),
         error: (error: unknown) => {
           const apiError = toApiError(error);
-          // A name or title already in use (ot_room_name_taken, procedure_title_taken, ...) is the first field's.
+          // A name or title already in use (ot_room_name_taken, antibiotic_name_taken, ...) is the first field's.
           const first = definition.fields[0]?.key ?? 'name';
           const codes = apiError.code.endsWith('_taken') ? { [apiError.code]: first } : {};
           const unplaced = applyServerErrors(this.form, apiError, codes);

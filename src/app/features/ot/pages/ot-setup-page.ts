@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PageHeader } from '../../../shared/components/page-header';
-import { MasterTable } from '../components/master-table';
+import { MasterTable } from '../../../shared/components/master-table';
 import { OT_MASTERS } from '../models/ot-masters';
 
 /** The OT masters: rooms, operations, OT and anaesthesia types, surgery procedures. */
@@ -14,7 +14,7 @@ import { OT_MASTERS } from '../models/ot-masters';
       subtitle="Rooms, operations, OT and anaesthesia types, surgery procedures."
     />
     <mat-tab-group mat-stretch-tabs="false" animationDuration="0ms">
-      @for (definition of masters; track definition.master) {
+      @for (definition of masters; track definition.path) {
         <mat-tab [label]="definition.label">
           <div class="pt-4">
             <app-master-table [definition]="definition" />

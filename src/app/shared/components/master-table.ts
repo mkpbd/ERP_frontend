@@ -6,18 +6,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { filter, switchMap } from 'rxjs';
-import { Authorization } from '../../../core/authorization/authorization.service';
-import { toApiError } from '../../../core/http/api-error';
-import { NotificationService } from '../../../core/services/notification.service';
-import { ConfirmService } from '../../../shared/components/confirm-dialog';
-import { EmptyState, ErrorState } from '../../../shared/components/state-views';
-import { StatusBadge } from '../../../shared/components/status-badge';
-import type { OtMasterRecord } from '../models/ot.models';
-import type { MasterDefinition } from '../models/ot-masters';
-import { OtApi } from '../services/ot-api.service';
+import { Authorization } from '../../core/authorization/authorization.service';
+import { toApiError } from '../../core/http/api-error';
+import { NotificationService } from '../../core/services/notification.service';
+import type { MasterDefinition, RecordRow } from '../models/record-master';
+import { RecordsApi } from '../services/records-api.service';
+import { ConfirmService } from './confirm-dialog';
+import { EmptyState, ErrorState } from './state-views';
+import { StatusBadge } from './status-badge';
 import { MasterDialog, type MasterDialogData } from './master-dialog';
 
-/** One OT master's records, with add, edit and delete for `ot:manage`. */
+/** One master's records, with add, edit and delete for the master's manage permission. */
 @Component({
   selector: 'app-master-table',
   imports: [
@@ -104,16 +103,16 @@ import { MasterDialog, type MasterDialogData } from './master-dialog';
 export class MasterTable {
   readonly definition = input.required<MasterDefinition>();
 
-  private readonly api = inject(OtApi);
+  private readonly api = inject(RecordsApi);
   private readonly dialog = inject(MatDialog);
   private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
   private readonly authorization = inject(Authorization);
-  protected readonly canManage = computed(() => this.authorization.can('ot:manage'));
+  protected readonly canManage = computed(() => this.authorization.can(this.definition().managePermission));
 
   protected readonly records = rxResource({
-    params: () => this.definition().master,
-    stream: ({ params }) => this.api.masters(params),
+    params: () => this.definition().path,
+    stream: ({ params }) => this.api.list(params),
   });
   protected readonly rows = computed(() => (this.records.hasValue() ? this.records.value() : []));
   protected readonly error = computed(() => {
@@ -123,15 +122,15 @@ export class MasterTable {
   protected readonly listed = computed(() => this.definition().fields.filter((field) => field.listed));
   protected readonly columns = computed(() => [...this.listed().map((field) => field.key), 'actions']);
 
-  protected title(row: OtMasterRecord): string {
+  protected title(row: RecordRow): string {
     const key = this.definition().fields[0]?.key ?? 'name';
     return String(row[key] ?? '');
   }
 
-  protected edit(record?: OtMasterRecord): void {
+  protected edit(record?: RecordRow): void {
     const definition = this.definition();
     this.dialog
-      .open<MasterDialog, MasterDialogData, OtMasterRecord>(MasterDialog, {
+      .open<MasterDialog, MasterDialogData, RecordRow>(MasterDialog, {
         data: { definition, ...(record ? { record } : {}) },
         width: '32rem',
         maxWidth: '95vw',
@@ -144,7 +143,7 @@ export class MasterTable {
       });
   }
 
-  protected remove(record: OtMasterRecord): void {
+  protected remove(record: RecordRow): void {
     const definition = this.definition();
     this.confirm
       .confirm({
@@ -155,7 +154,7 @@ export class MasterTable {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.api.deleteMaster(definition.master, record.id)),
+        switchMap(() => this.api.remove(definition.path, record.id)),
       )
       .subscribe({
         next: () => {

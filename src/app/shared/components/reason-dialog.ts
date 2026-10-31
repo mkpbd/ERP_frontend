@@ -5,18 +5,22 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { finalize, Observable } from 'rxjs';
-import { toApiError } from '../../../core/http/api-error';
-import { describeError } from '../../../core/services/notification.service';
-import { ValidationMessagePipe } from '../../../shared/pipes/validation-message.pipe';
+import { toApiError } from '../../core/http/api-error';
+import { describeError } from '../../core/services/notification.service';
+import { ValidationMessagePipe } from '../pipes/validation-message.pipe';
 
 export interface ReasonDialogData {
   readonly title: string;
   readonly message: string;
   readonly confirmText: string;
+  /** The field's label (default Reason). */
+  readonly label?: string;
+  /** Styles the confirm button as a destructive action (default true). */
+  readonly destructive?: boolean;
   readonly submit: (reason: string) => Observable<void>;
 }
 
-/** An action that needs a reason (cancelling an operation or a charge). */
+/** An action that needs a few words: a reason (cancelling, rejecting) or a name (who collected a report). */
 @Component({
   selector: 'app-reason-dialog',
   imports: [
@@ -38,14 +42,19 @@ export interface ReasonDialogData {
           </p>
         }
         <mat-form-field>
-          <mat-label>Reason</mat-label>
+          <mat-label>{{ data.label ?? 'Reason' }}</mat-label>
           <textarea matInput formControlName="reason" rows="2" required cdkFocusInitial></textarea>
-          <mat-error>{{ reason.errors | validationMessage: 'Reason' }}</mat-error>
+          <mat-error>{{ reason.errors | validationMessage: data.label ?? 'Reason' }}</mat-error>
         </mat-form-field>
       </mat-dialog-content>
       <mat-dialog-actions align="end">
         <button matButton type="button" mat-dialog-close [disabled]="submitting()">Back</button>
-        <button matButton="filled" type="submit" class="app-danger-button" [disabled]="submitting()">
+        <button
+          matButton="filled"
+          type="submit"
+          [class.app-danger-button]="data.destructive ?? true"
+          [disabled]="submitting()"
+        >
           {{ data.confirmText }}
         </button>
       </mat-dialog-actions>

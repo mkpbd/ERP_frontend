@@ -49,6 +49,11 @@ export const PERMISSIONS = [
   'ot:schedule',
   'ot:note',
   'ot:manage',
+  'lab:read',
+  'lab:collect',
+  'lab:result',
+  'lab:verify',
+  'lab:manage',
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
