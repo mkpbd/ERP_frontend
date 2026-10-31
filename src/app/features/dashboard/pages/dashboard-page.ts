@@ -8,6 +8,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { Authorization } from '../../../core/authorization/authorization.service';
 import { EmptyState, ErrorState, LoadingState } from '../../../shared/components/state-views';
 import { BadgeTone, StatusBadge } from '../../../shared/components/status-badge';
+import { DashboardSections } from '../components/dashboard-sections';
 import { StatCard } from '../components/stat-card';
 import { DashboardApi, RecentActivity } from '../services/dashboard-api.service';
 import { toApiError } from '../../../core/http/api-error';
@@ -31,6 +32,7 @@ const OUTCOME_TONES: Record<RecentActivity['outcome'], BadgeTone> = {
     RouterLink,
     MatButtonModule,
     MatIconModule,
+    DashboardSections,
     StatCard,
     StatusBadge,
     EmptyState,
@@ -48,6 +50,8 @@ const OUTCOME_TONES: Record<RecentActivity['outcome'], BadgeTone> = {
         }
       </p>
     </section>
+
+    <app-dashboard-sections />
 
     @if (showStats()) {
       <section class="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-label="Summary">

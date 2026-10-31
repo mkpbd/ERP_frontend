@@ -332,6 +332,18 @@ export class MockApi {
       });
     }
 
+    if (method === 'GET' && path === '/dashboard') {
+      // No section by default; a feature mock installed after this one gives figures.
+      const day = url.searchParams.get('from') ?? NOW.slice(0, 10);
+      return json(200, {
+        from: day,
+        to: url.searchParams.get('to') ?? day,
+        previousFrom: day,
+        previousTo: day,
+        sections: [],
+      });
+    }
+
     return json(404, problem(404, 'not_found', `No mock for ${method} ${path}`));
   }
 }

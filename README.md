@@ -67,7 +67,8 @@ src/app/
 │                    navigation config (typed, permission-filtered)
 └── features/        one folder per business capability, each lazy-loaded
     ├── auth/            login, forgot/reset password, verify email
-    ├── dashboard/       greeting, counters, recent activity (@defer)
+    ├── dashboard/       greeting, the hospital's figures by section (days, change on the days before, a split
+    │                    on a click), admin counters, recent activity (@defer)
     ├── users/           list (search, filter, sort, paginate), create, detail, roles, deactivate
     ├── roles/           list, create, rename, permission matrix, delete
     ├── permissions/     permission catalog

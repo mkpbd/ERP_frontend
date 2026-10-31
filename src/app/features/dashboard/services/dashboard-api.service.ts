@@ -4,6 +4,7 @@ import { map, Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api-config';
 import { toHttpParams } from '../../../core/http/http-params';
 import type { Page } from '../../../shared/models/page';
+import type { DashboardBreakdown, DashboardOverview, DayRange } from '../models/dashboard.models';
 
 export interface RecentActivity {
   readonly id: string;
@@ -31,6 +32,19 @@ export class DashboardApi {
 
   countRoles(): Observable<number> {
     return this.http.get<unknown[]>(`${this.baseUrl}/roles`).pipe(map((roles) => roles.length));
+  }
+
+  /** The sections the user may see, over the days given and the days before. */
+  overview(range: DayRange): Observable<DashboardOverview> {
+    return this.http.get<DashboardOverview>(`${this.baseUrl}/dashboard`, {
+      params: toHttpParams({ ...range }),
+    });
+  }
+
+  breakdown(key: string, range: DayRange, by: string): Observable<DashboardBreakdown> {
+    return this.http.get<DashboardBreakdown>(`${this.baseUrl}/dashboard/heads/${encodeURIComponent(key)}`, {
+      params: toHttpParams({ ...range, by }),
+    });
   }
 
   recentActivity(limit = 8): Observable<readonly RecentActivity[]> {
